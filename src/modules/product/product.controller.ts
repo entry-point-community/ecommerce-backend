@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -23,6 +24,19 @@ export class ProductController {
   @AllowAnonymous()
   findAll(@Query() getProductsDto: GetProductsDto) {
     return this.productService.findAll(getProductsDto);
+  }
+
+  @Get('/:id')
+  @AllowAnonymous()
+  findOne(@Param('id') id: string) {
+    const product = this.productService.findById(id);
+
+    if (!product) {
+      // Status code 404
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
   }
 
   @Post()

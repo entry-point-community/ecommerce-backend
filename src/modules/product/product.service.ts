@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/infra/database/prisma.service';
@@ -64,10 +64,31 @@ export class ProductService {
     }));
   }
 
-  async findOne(id: string) {
-    return await this.prisma.product.findUnique({
-      where: { id },
+  public async findById(id: string) {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        imageUrl: true,
+        description: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
+
+    if (!product) return null;
+
+    return {
+      ...product,
+      price: product.price.toNumber(),
+    };
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
