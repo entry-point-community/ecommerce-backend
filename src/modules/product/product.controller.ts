@@ -1,20 +1,19 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Query,
+  Get,
   NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { GetProductByIdDto } from './dto/get-product-by-id.dto';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
+import { CreateProductDto } from './dto/create-product.dto';
 import { GetProductsDto } from './dto/get-products.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductService } from './product.service';
 
 @Controller('products')
 export class ProductController {
