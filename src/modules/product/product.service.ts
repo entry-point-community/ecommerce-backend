@@ -55,7 +55,7 @@ export class ProductService {
       };
     }
 
-    if (categoryIds) {
+    if (categoryIds?.length) {
       whereClause.categoryId = {
         in: categoryIds,
       };

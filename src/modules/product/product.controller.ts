@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   Patch,
@@ -41,6 +42,7 @@ export class ProductController {
 
   @Post('/search')
   @AllowAnonymous()
+  @HttpCode(200)
   search(@Body() searchProductDto: SearchProductDto) {
     return this.productService.searchProducts(searchProductDto);
   }
