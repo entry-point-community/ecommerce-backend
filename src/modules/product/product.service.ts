@@ -3,6 +3,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/infra/database/prisma.service';
 import { GetProductsDto, ProductSortBy } from './dto/get-products.dto';
+import { Prisma } from 'generated/prisma/client';
+import { SearchProductDto } from './dto/search-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -38,6 +40,63 @@ export class ProductService {
           price: product.price.toNumber(),
         }));
     }
+  }
+
+  public async searchProducts(searchProductsDto: SearchProductDto) {
+    const { productName, categoryIds, sortBy, limit } = searchProductsDto;
+
+    const whereClause: Prisma.ProductWhereInput = {};
+    const orderByClause: Prisma.ProductOrderByWithRelationInput = {};
+
+    if (productName) {
+      whereClause.name = {
+        contains: productName,
+        mode: 'insensitive',
+      };
+    }
+
+    if (categoryIds) {
+      whereClause.categoryId = {
+        in: categoryIds,
+      };
+    }
+
+    if (sortBy) {
+      switch (sortBy) {
+        case ProductSortBy.PRICE_ASC:
+          orderByClause.price = 'asc';
+          break;
+        case ProductSortBy.PRICE_DESC:
+          orderByClause.price = 'desc';
+          break;
+        default:
+          break;
+      }
+    }
+
+    const products = await this.prisma.product.findMany({
+      where: whereClause,
+      orderBy: orderByClause,
+      take: limit,
+      select: {
+        id: true,
+        category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        description: true,
+        name: true,
+        price: true,
+        imageUrl: true,
+      },
+    });
+
+    return products.map((product) => ({
+      ...product,
+      price: product.price.toNumber(),
+    }));
   }
 
   // TODO: Implement recommended algorithm

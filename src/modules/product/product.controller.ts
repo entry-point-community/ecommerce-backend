@@ -14,6 +14,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { GetProductsDto } from './dto/get-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
+import { SearchProductDto } from './dto/search-product.dto';
 
 @Controller('products')
 export class ProductController {
@@ -36,6 +37,12 @@ export class ProductController {
     }
 
     return product;
+  }
+
+  @Post('/search')
+  @AllowAnonymous()
+  search(@Body() searchProductDto: SearchProductDto) {
+    return this.productService.searchProducts(searchProductDto);
   }
 
   @Post()
